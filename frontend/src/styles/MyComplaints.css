@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* Page Background */
+.complaints-page {
+  padding: 60px 30px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2ff, #f0fdfa);
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+}
+
+/* HOME ICON */
+.home-icon {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  font-size: 24px;
+  color: #4f46e5;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.home-icon:hover {
+  transform: scale(1.15);
+  color: #06b6d4;
+}
+
+/* Page Title */
+.page-title {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 28px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+}
+
+/* Loading & No Data */
+.loading,
+.no-data {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Grid */
+.complaints-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
+}
+
+/* Complaint Card */
+.complaint-card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(79, 70, 229, 0.12);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gradient Top Border */
+.complaint-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5px;
+  width: 100%;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+}
+
+/* Hover Effect */
+.complaint-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 50px rgba(79, 70, 229, 0.18);
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* STATUS BADGES */
+.status {
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Pending */
+.status.pending {
+  background: rgba(79, 70, 229, 0.1);
+  color: #4f46e5;
+}
+
+/* In Progress */
+.status.in_progress {
+  background: rgba(6, 182, 212, 0.15);
+  color: #06b6d4;
+}
+
+/* Resolved */
+.status.resolved {
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+}
+
+/* Description */
+.description {
+  margin: 18px 0;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Date */
+.date {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Image */
+.complaint-image {
+  margin-top: 18px;
+  width: 100%;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease;
+}
+
+.complaint-image:hover {
+  transform: scale(1.03);
+}
+
+

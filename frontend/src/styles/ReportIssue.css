@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* Page Background */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #eef2ff, #f0fdfa);
+  margin: 0;
+  padding: 0;
+}
+
+/* Wrapper */
+.report-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+}
+
+/* Main Card */
+.report-card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 20px 45px rgba(79, 70, 229, 0.12);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.report-card:hover {
+  transform: translateY(-4px);
+}
+
+/* ================= HEADER ================= */
+
+.report-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 22px;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  color: white;
+}
+
+/* Dashboard Navigation (Left Side) */
+.dashboard-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.home-icon {
+  font-size: 18px;
+}
+
+.dashboard-link:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* Centered Title */
+.report-header h2 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+}
+
+/* ================= FORM ================= */
+
+.report-form {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Labels */
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: block;
+  color: #374151;
+  font-size: 14px;
+}
+
+/* Inputs */
+select,
+textarea {
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+  background-color: white;
+}
+
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+}
+
+/* ================= ACTION ROW ================= */
+
+.action-row {
+  display: flex;
+  gap: 16px;
+}
+
+/* Action Cards */
+.action-card {
+  flex: 1;
+  padding: 18px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  color: white;
+
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+}
+
+/* Icon */
+.action-icon {
+  font-size: 22px;
+  color: white;
+}
+
+/* Hover */
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 40px rgba(79, 70, 229, 0.4);
+}
+
+/* Active Glow */
+.action-card.active {
+  box-shadow: 
+    0 0 0 4px rgba(255, 255, 255, 0.5),
+    0 22px 45px rgba(79, 70, 229, 0.45);
+  transform: translateY(-3px);
+}
+
+/* ================= SUBMIT BUTTON ================= */
+
+.submit-btn {
+  margin-top: 10px;
+  padding: 15px;
+  border-radius: 16px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  transition: all 0.3s ease;
+  box-shadow: 0 12px 30px rgba(79, 70, 229, 0.35);
+}
+
+.submit-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 45px rgba(79, 70, 229, 0.45);
+}
+
+/* ================= ERROR BOX ================= */
+
+.error-box {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #fecaca;
+}

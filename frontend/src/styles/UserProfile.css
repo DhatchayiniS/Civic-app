@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* PAGE BACKGROUND */
+.profile-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2ff, #f0fdfa);
+  padding: 60px 20px;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* MAIN CONTAINER */
+.profile-container {
+  width: 750px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 45px rgba(79, 70, 229, 0.12);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+/* HEADER */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+/* NAME */
+.profile-header h2 {
+  font-size: 26px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* NAME INPUT (EDIT MODE) */
+.name-input {
+  font-size: 24px;
+  font-weight: 600;
+  border: none;
+  border-bottom: 2px solid #4f46e5;
+  outline: none;
+  font-family: 'Poppins', sans-serif;
+  padding: 4px 0;
+}
+
+/* ROLE BADGE */
+.role-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(79, 70, 229, 0.1);
+  color: #4f46e5;
+}
+
+/* EDIT BUTTON */
+.edit-profile-btn {
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  color: white;
+  transition: all 0.25s ease;
+  box-shadow: 0 10px 20px rgba(79, 70, 229, 0.25);
+}
+
+.edit-profile-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 25px rgba(79, 70, 229, 0.35);
+}
+
+/* DETAILS SECTION */
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* EACH ROW */
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.detail-row span {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.detail-row p {
+  font-size: 15px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* SELECT */
+.detail-row select {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.25s ease;
+}
+
+.detail-row select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+}
+
+/* ACTION BUTTONS */
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* SAVE BUTTON */
+.save-btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  color: white;
+  transition: all 0.25s ease;
+}
+
+.save-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* CANCEL BUTTON */
+.cancel-btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.cancel-btn:hover {
+  background: #e5e7eb;
+}
+
+/* LOADING */
+.loading {
+  text-align: center;
+  padding: 60px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+}
+
+/* FADE ANIMATION */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
