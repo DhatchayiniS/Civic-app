@@ -1,190 +1,324 @@
-import { useEffect, useState } from "react"; 
+import { useEffect, useState } from "react";
 import {
   getDashboardStats,
   getLocalBodies,
-  createLocalBody,
-  updateLocalBody,
-  getAllWards,
+  createAuthority,
+  updateAuthority,
+  getAuthorities
 } from "../api/adminService";
 import "../styles/admin-dashboard.css";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
-  const [stats, setStats] = useState({});
+
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    inProgress: 0,
+    resolved: 0,
+  });
+
   const [localBodies, setLocalBodies] = useState([]);
-  const [wards, setWards] = useState([]);
-  const [selectedWardIds, setSelectedWardIds] = useState([]);
+  const [loadingStats, setLoadingStats] = useState(true);
+  const [loadingBodies, setLoadingBodies] = useState(true);
+
+  // ✅ NEW STATES
+  const [authorities, setAuthorities] = useState([]);
+  const [filterLocalBody, setFilterLocalBody] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
 
   const [form, setForm] = useState({
     name: "",
-    district: "",
-    state: "",
-    officialEmail: "",
-    officialPhone: "",
-    address: "",
+    email: "",
     password: "",
-    status: "ACTIVE",
+    localBodyId: "",
+    status: "ACTIVE"
   });
 
-  const [editingId, setEditingId] = useState(null);
+  const navigate = useNavigate();
 
-  // Load dashboard, local bodies, and wards
-  useEffect(() => {
-    loadData();
-    loadWards();
-  }, []);
+  const handleLogout = () => {
+    // Clear any stored auth data if you have
+    localStorage.clear();
 
-  const loadData = async () => {
-    const dashboardData = await getDashboardStats();
-    const lbData = await getLocalBodies();
-    setStats(dashboardData);
-    setLocalBodies(lbData);
+    // Redirect to login page
+    navigate("/login");
   };
 
-  const loadWards = async () => {
-    const data = await getAllWards();
-    setWards(Array.isArray(data) ? data : []);
+  useEffect(() => {
+    loadStats();
+    loadLocalBodies();
+  }, []);
+
+  // ✅ Reload authorities when filters change
+  useEffect(() => {
+    loadAuthorities();
+  }, [filterLocalBody, filterStatus]);
+
+  const loadStats = async () => {
+    try {
+      const data = await getDashboardStats();
+      setStats(data);
+    } catch (error) {
+      console.error("Error loading stats", error);
+    } finally {
+      setLoadingStats(false);
+    }
+  };
+
+  const loadLocalBodies = async () => {
+    try {
+      const data = await getLocalBodies();
+      setLocalBodies(data);
+    } catch (error) {
+      console.error("Error loading local bodies", error);
+    } finally {
+      setLoadingBodies(false);
+    }
+  };
+
+  // ✅ NEW
+  const loadAuthorities = async () => {
+    try {
+      const data = await getAuthorities(
+        filterLocalBody ? Number(filterLocalBody) : null,
+        filterStatus || null
+      );
+      setAuthorities(data);
+    } catch (error) {
+      console.error("Error loading authorities", error);
+    }
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
-  const handleWardSelection = (e) => {
-    const options = e.target.options;
-    const selected = [];
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) selected.push(Number(options[i].value));
-    }
-    setSelectedWardIds(selected);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const payload = {
-      localBody: form,
-      wardIds: selectedWardIds,
-    };
-
+  const handleSubmit = async (mode) => {
     try {
-      if (editingId) {
-        await updateLocalBody(editingId, payload);
-      } else {
-        await createLocalBody(payload);
+      if (!form.localBodyId) {
+        alert("Please select a Local Body.");
+        return;
       }
 
-      // Reset form
+      if (!form.name.trim()) {
+        alert("Authority name is required.");
+        return;
+      }
+
+      if (mode === "update") {
+
+        await updateAuthority({
+          name: form.name,
+          localBodyId: Number(form.localBodyId),
+          status: form.status
+        });
+
+        alert("Authority updated successfully!");
+
+      } else {
+
+        await createAuthority({
+          ...form,
+          localBodyId: Number(form.localBodyId)
+        });
+
+        alert("Authority created successfully!");
+      }
+
       setForm({
         name: "",
-        district: "",
-        state: "",
-        officialEmail: "",
-        officialPhone: "",
-        address: "",
+        email: "",
         password: "",
-        status: "ACTIVE",
+        localBodyId: "",
+        status: "ACTIVE"
       });
-      setSelectedWardIds([]);
-      setEditingId(null);
-      loadData();
-    } catch (err) {
-      console.error("Error submitting form:", err);
+
+      loadAuthorities(); // refresh table
+
+    } catch (error) {
+      alert(error.response?.data?.message || "Error occurred");
     }
-  };
-
-  const handleEdit = (lb) => {
-    setForm(lb);
-
-    // Pre-select wards for editing safely
-    if (lb.wards && Array.isArray(lb.wards)) {
-      setSelectedWardIds(lb.wards.map((w) => w.id));
-    } else {
-      setSelectedWardIds([]);
-    }
-
-    setEditingId(lb.id);
   };
 
   return (
     <div className="admin-container">
-      <h1>Admin Dashboard</h1>
-
-      {/* 📊 Stats Cards */}
-      <div className="stats-grid">
-        <div className="card">
-          <h3>Total Complaints</h3>
-          <p>{stats.total || 0}</p>
-        </div>
-        <div className="card">
-          <h3>Pending</h3>
-          <p>{stats.pending || 0}</p>
-        </div>
-        <div className="card">
-          <h3>In Progress</h3>
-          <p>{stats.inProgress || 0}</p>
-        </div>
-        <div className="card">
-          <h3>Resolved</h3>
-          <p>{stats.resolved || 0}</p>
-        </div>
+      <div className="admin-header">
+        <h1>SmartResolve</h1>
+        <button className="logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
       </div>
 
-      {/* 🏛 Local Body Form */}
-      <div className="form-section">
-        <h2>{editingId ? "Update Local Body" : "Create Local Body"}</h2>
-        <form onSubmit={handleSubmit}>
-          <input name="name" placeholder="Name" value={form.name} onChange={handleChange} required />
-          <input name="district" placeholder="District" value={form.district} onChange={handleChange} required />
-          <input name="state" placeholder="State" value={form.state} onChange={handleChange} required />
-          <input name="officialEmail" placeholder="Official Email" value={form.officialEmail} onChange={handleChange} required />
-          <input name="officialPhone" placeholder="Phone" value={form.officialPhone} onChange={handleChange} />
-          <input name="address" placeholder="Address" value={form.address} onChange={handleChange} />
-          {!editingId && <input name="password" placeholder="Password" value={form.password} onChange={handleChange} required />}
+      {loadingStats ? (
+        <p className="loading-text">Loading statistics...</p>
+      ) : (
+        <div className="stats-grid">
+          <div className="card">
+            <h3>Total Complaints</h3>
+            <p>{stats.total}</p>
+          </div>
+          <div className="card">
+            <h3>Pending</h3>
+            <p>{stats.pending}</p>
+          </div>
+          <div className="card">
+            <h3>In Progress</h3>
+            <p>{stats.inProgress}</p>
+          </div>
+          <div className="card">
+            <h3>Resolved</h3>
+            <p>{stats.resolved}</p>
+          </div>
+        </div>
+      )}
 
-          <select name="status" value={form.status} onChange={handleChange}>
-            <option value="ACTIVE">ACTIVE</option>
-            <option value="INACTIVE">INACTIVE</option>
-          </select>
+      {/* ================= Create / Update ================= */}
+      <div className="authority-section">
+        <h2>Create / Update Authority</h2>
 
-          {/* Multi-select for Wards */}
-          <label>Select Wards:</label>
-          <select multiple value={selectedWardIds} onChange={handleWardSelection}>
-            {(wards || []).map((ward) => (
-              <option key={ward.id} value={ward.id}>
-                Ward {ward.wardNo || ward.id}
+        <form
+          className="authority-form"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <div className="form-group">
+            <label>Name</label>
+            <input
+              type="text"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Select Local Body</label>
+            {loadingBodies ? (
+              <p className="loading-text">Loading local bodies...</p>
+            ) : (
+              <select
+                name="localBodyId"
+                value={form.localBodyId}
+                onChange={handleChange}
+                required
+              >
+                <option value="">-- Select Local Body --</option>
+                {localBodies.map((lb) => (
+                  <option key={lb.id} value={lb.id}>
+                    {lb.name} ({lb.type})
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label>Status</label>
+            <select
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+            >
+              <option value="ACTIVE">ACTIVE</option>
+              <option value="INACTIVE">INACTIVE</option>
+            </select>
+          </div>
+
+          <div className="button-row">
+            <button
+              type="button"
+              className="btn-primary left-btn"
+              onClick={() => handleSubmit("create")}
+            >
+              Create
+            </button>
+
+            <button
+              type="button"
+              className="btn-primary right-btn"
+              onClick={() => handleSubmit("update")}
+            >
+              Update
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* ================= Authority List ================= */}
+      <div className="authority-list-section">
+        <h2>Authority List</h2>
+
+        <div className="filter-row">
+          <select
+            value={filterLocalBody}
+            onChange={(e) => setFilterLocalBody(e.target.value)}
+          >
+            <option value="">All Local Bodies</option>
+            {localBodies.map((lb) => (
+              <option key={lb.id} value={lb.id}>
+                {lb.name}
               </option>
             ))}
           </select>
 
-          <button type="submit">{editingId ? "Update" : "Create"}</button>
-        </form>
-      </div>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
+            <option value="">All Status</option>
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="INACTIVE">INACTIVE</option>
+          </select>
+        </div>
 
-      {/* 📋 Local Body Table */}
-      <div className="table-section">
-        <h2>Local Bodies</h2>
-        <table>
+        <table className="authority-table">
           <thead>
             <tr>
               <th>Name</th>
-              <th>District</th>
+              <th>Email</th>
+              <th>Local Body</th>
               <th>Status</th>
-              <th>Wards</th>
-              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            {(localBodies || []).map((lb) => (
-              <tr key={lb.id}>
-                <td>{lb.name}</td>
-                <td>{lb.district}</td>
-                <td>{lb.status}</td>
-                <td>{lb.wards && Array.isArray(lb.wards) ? lb.wards.map((w) => w.wardNo).join(", ") : "-"}</td>
-                <td>
-                  <button onClick={() => handleEdit(lb)}>Edit</button>
-                </td>
+            {authorities.length === 0 ? (
+              <tr>
+                <td colSpan="4">No authorities found</td>
               </tr>
-            ))}
+            ) : (
+              authorities.map((auth) => (
+                <tr key={auth.id}>
+                  <td>{auth.user.name}</td>
+                  <td>{auth.user.email}</td>
+                  <td>{auth.localBody.name}</td>
+                  <td>{auth.status}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

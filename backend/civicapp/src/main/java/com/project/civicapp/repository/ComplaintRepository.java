@@ -11,5 +11,6 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     List<Complaint> findByWard_WardNo(Integer wardNo);
 
     List<Complaint> findByUser_Id(Long userId);
+    long countByStatus(String status);
 
 }

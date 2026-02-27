@@ -1,7 +1,10 @@
 package com.project.civicapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "local_body")
@@ -18,7 +21,10 @@ public class LocalBody {
 
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "ward_id")
-    private Ward ward;
+    @Enumerated(EnumType.STRING)
+    private LocalBodyType type;
+
+    @OneToMany(mappedBy = "localBody")
+    @JsonManagedReference
+    private List<Ward> wards;
 }

@@ -33,10 +33,6 @@ public class User {
     @JoinColumn(name = "ward_id")
     private Ward ward;
 
-    @ManyToOne
-    @JoinColumn(name = "local_body_id", nullable = true) // only for officers
-    private LocalBody localBody;
-
     private LocalDateTime createdAt;
 
     @PrePersist

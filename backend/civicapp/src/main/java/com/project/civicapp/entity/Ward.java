@@ -1,5 +1,6 @@
 package com.project.civicapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,4 +32,9 @@ public class Ward {
 
     @Column(nullable = false)
     private Double maxLongitude;
+
+    @ManyToOne
+    @JoinColumn(name = "local_body_id")
+    @JsonBackReference
+    private LocalBody localBody;
 }

@@ -1,6 +1,6 @@
 package com.project.civicapp.entity;
 
-public enum LocalBodyStatus {
+public enum AuthorityStatus {
     ACTIVE,
     INACTIVE
 }
