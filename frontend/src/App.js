@@ -12,6 +12,7 @@ import AuthorityDashboard from "./dashboards/AuthorityDashboard";
 import ManageWorkers from "./dashboards/ManageWorkers";
 import AssignComplaints from "./dashboards/AssignComplaints";
 import ViewStatus from "./dashboards/ViewStatus";
+import FieldWorkerDashboard from "./dashboards/FieldWorkerDashboard";
 
 
 
@@ -56,6 +57,15 @@ function App() {
           <Route path="/manage-workers" element={<ManageWorkers />} />
           <Route path="/assign-complaints" element={<AssignComplaints />} />
           <Route path="/view-status" element={<ViewStatus />} />
+
+          <Route
+            path="/fieldworker-dashboard"
+            element={
+              <PrivateRoute role="FIELD_WORKER">
+                <FieldWorkerDashboard />
+              </PrivateRoute>
+            }
+          />
 
           <Route 
             path="/profile" 

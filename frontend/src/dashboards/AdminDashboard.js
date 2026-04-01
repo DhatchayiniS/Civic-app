@@ -14,8 +14,8 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState({
     total: 0,
     pending: 0,
-    inProgress: 0,
-    resolved: 0,
+    assigned: 0,
+    completed: 0,
   });
 
   const [localBodies, setLocalBodies] = useState([]);
@@ -164,12 +164,12 @@ const AdminDashboard = () => {
             <p>{stats.pending}</p>
           </div>
           <div className="card">
-            <h3>In Progress</h3>
-            <p>{stats.inProgress}</p>
+            <h3>Assigned</h3>
+            <p>{stats.assigned}</p>
           </div>
           <div className="card">
-            <h3>Resolved</h3>
-            <p>{stats.resolved}</p>
+            <h3>Completed</h3>
+            <p>{stats.completed}</p>
           </div>
         </div>
       )}

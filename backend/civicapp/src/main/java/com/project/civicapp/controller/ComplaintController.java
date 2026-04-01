@@ -81,4 +81,21 @@ public class ComplaintController {
         );
     }
 
+    @GetMapping("/worker/{workerId}")
+    public ResponseEntity<?> getByWorker(@PathVariable Long workerId) {
+        return ResponseEntity.ok(complaintService.getComplaintsByWorker(workerId));
+    }
+
+    @PutMapping("/{id}/complete")
+    public ResponseEntity<?> completeComplaint(
+            @PathVariable Long id,
+            @RequestParam(required = false) MultipartFile completionImage
+    ) {
+        try {
+            complaintService.completeComplaint(id, completionImage);
+            return ResponseEntity.ok("Complaint marked as completed");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

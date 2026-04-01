@@ -1,0 +1,226 @@
+/* fieldworker-dashboard.css */
+.fw-container {
+  min-height: 100vh;
+  font-family: var(--font);
+}
+
+/* Header */
+.fw-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 36px;
+  background: #fff;
+  border-bottom: 1.5px solid var(--gray-200);
+  box-shadow: 0 2px 12px rgba(79,70,229,0.07);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.fw-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--primary), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.3px;
+}
+
+.fw-header span {
+  font-size: 13px;
+  color: var(--gray-500);
+  font-weight: 500;
+}
+
+.logout-btn {
+  padding: 9px 20px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--primary);
+  background: #fff;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(79,70,229,0.25);
+}
+
+/* Stats */
+.fw-stats {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  padding: 28px 36px 8px;
+  flex-wrap: wrap;
+}
+
+.fw-stat-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 20px 36px;
+  text-align: center;
+  border: 1.5px solid var(--gray-200);
+  box-shadow: var(--card-shadow);
+  min-width: 130px;
+  position: relative;
+  overflow: hidden;
+}
+
+.fw-stat-card::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--cyan));
+}
+
+.fw-stat-card .stat-num {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -1px;
+}
+
+.fw-stat-card .stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+/* Content */
+.fw-content {
+  padding: 28px 36px;
+}
+
+.fw-content h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 20px;
+  letter-spacing: -0.2px;
+}
+
+.fw-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 20px;
+}
+
+/* Card */
+.fw-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  border: 1.5px solid var(--gray-200);
+  box-shadow: var(--card-shadow);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.fw-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+.fw-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.fw-card-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+/* Status badges */
+.status-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.pending   { background: var(--warning-light); color: var(--warning); }
+.status-badge.assigned  { background: var(--primary-light);  color: var(--primary); }
+.status-badge.completed { background: var(--success-light);  color: var(--success); }
+
+.fw-card p {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin: 5px 0;
+  line-height: 1.5;
+}
+
+.fw-card p strong { color: var(--gray-700); font-weight: 600; }
+
+/* Complete section */
+.complete-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1.5px solid var(--gray-100);
+}
+
+.file-input-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.file-input {
+  width: 100%;
+  font-size: 13px;
+  font-family: var(--font);
+  margin-bottom: 12px;
+  color: var(--gray-700);
+}
+
+.btn-complete {
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--primary), var(--cyan));
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  box-shadow: 0 4px 14px rgba(79,70,229,0.22);
+}
+
+.btn-complete:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(79,70,229,0.32);
+}
+
+.btn-complete:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 72px 20px;
+  color: var(--gray-400);
+  font-size: 15px;
+  font-weight: 500;
+}

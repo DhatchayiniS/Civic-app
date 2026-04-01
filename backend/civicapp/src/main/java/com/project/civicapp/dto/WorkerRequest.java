@@ -6,30 +6,22 @@ public class WorkerRequest {
 
     private String name;
     private WorkerStatus status;
-    private Long localBodyId; // ✅ THIS MUST COME FROM FRONTEND
+    private Long localBodyId;
+    private String email;
+    private String password;
 
-    // Getters & Setters
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public WorkerStatus getStatus() { return status; }
+    public void setStatus(WorkerStatus status) { this.status = status; }
 
-    public WorkerStatus getStatus() {
-        return status;
-    }
+    public Long getLocalBodyId() { return localBodyId; }
+    public void setLocalBodyId(Long localBodyId) { this.localBodyId = localBodyId; }
 
-    public void setStatus(WorkerStatus status) {
-        this.status = status;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public Long getLocalBodyId() {
-        return localBodyId;
-    }
-
-    public void setLocalBodyId(Long localBodyId) {
-        this.localBodyId = localBodyId;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 }

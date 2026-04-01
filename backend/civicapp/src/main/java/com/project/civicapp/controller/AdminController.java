@@ -22,13 +22,13 @@ public class AdminController {
 
         long total = complaintRepository.count();
         long pending = complaintRepository.countByStatus("PENDING");
-        long inProgress = complaintRepository.countByStatus("IN_PROGRESS");
-        long resolved = complaintRepository.countByStatus("RESOLVED");
+        long assigned = complaintRepository.countByStatus("ASSIGNED");
+        long completed = complaintRepository.countByStatus("COMPLETED");
 
         stats.put("total", total);
         stats.put("pending", pending);
-        stats.put("inProgress", inProgress);
-        stats.put("resolved", resolved);
+        stats.put("assigned", assigned);
+        stats.put("completed", completed);
 
         return stats;
     }

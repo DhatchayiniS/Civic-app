@@ -114,6 +114,30 @@ public class ComplaintService {
 
         complaintRepository.save(complaint);
     }
+
+    public List<Complaint> getComplaintsByWorker(Long workerId) {
+        return complaintRepository.findByFieldWorker_Id(workerId);
+    }
+
+    public void completeComplaint(Long complaintId, MultipartFile image) throws IOException {
+        Complaint complaint = complaintRepository.findById(complaintId)
+                .orElseThrow(() -> new RuntimeException("Complaint not found"));
+
+        if (image != null && !image.isEmpty()) {
+            if (!image.getContentType().startsWith("image/")) {
+                throw new RuntimeException("Only image files allowed");
+            }
+            String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
+            String absoluteUploadPath = System.getProperty("user.dir") + File.separator + uploadDir;
+            File uploadFolder = new File(absoluteUploadPath);
+            if (!uploadFolder.exists()) uploadFolder.mkdirs();
+            image.transferTo(new File(uploadFolder, fileName));
+            complaint.setCompletionImage(fileName);
+        }
+
+        complaint.setStatus("COMPLETED");
+        complaintRepository.save(complaint);
+    }
 }
 
 

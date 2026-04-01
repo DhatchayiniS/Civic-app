@@ -21,8 +21,10 @@ const Login = () => {
       // 🔥 ADD THIS BLOCK (IMPORTANT)
       const user = {
         id: userData.id,
+        name: userData.name,
         role: userData.role,
-        localBodyId: userData.localBodyId   // ✅ required for workers
+        localBodyId: userData.localBodyId,
+        workerId: userData.workerId
       };
 
       console.log("Login response:", userData); // DEBUG
@@ -37,6 +39,8 @@ const Login = () => {
         navigate("/admin-dashboard");
       } else if (userData.role === "LOCAL_BODY") {
         navigate("/authority-dashboard");
+      } else if (userData.role === "FIELD_WORKER") {
+        navigate("/fieldworker-dashboard");
       } else {
         navigate("/user-dashboard");
       }

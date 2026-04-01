@@ -39,9 +39,9 @@ public class AuthController {
             resp.put("name", loginResp.getName());
             resp.put("email", loginResp.getEmail());
             resp.put("role", loginResp.getRole());
-            resp.put("wardNo", loginResp.getWardNo()); // IMPORTANT
-
+            resp.put("wardNo", loginResp.getWardNo());
             resp.put("localBodyId", loginResp.getLocalBodyId());
+            resp.put("workerId", loginResp.getWorkerId());
             return ResponseEntity.ok(resp);
 
         } catch (ResponseStatusException e) {

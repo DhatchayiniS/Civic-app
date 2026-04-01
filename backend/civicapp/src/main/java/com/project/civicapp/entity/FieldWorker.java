@@ -18,6 +18,10 @@ public class FieldWorker {
 
     private String name;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
+
     @ManyToOne
     @JoinColumn(name = "local_body_id")
     private LocalBody localBody;

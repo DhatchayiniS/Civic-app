@@ -6,6 +6,8 @@ const ManageWorkers = () => {
 
   const [name, setName] = useState("");
   const [status, setStatus] = useState("ACTIVE");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [workers, setWorkers] = useState([]);
   const [selectedWorkerId, setSelectedWorkerId] = useState(null);
 
@@ -23,19 +25,17 @@ const ManageWorkers = () => {
 
   // ✅ FETCH WORKERS
   const fetchWorkers = () => {
-
-    if (!localBodyId) {
-      console.error("localBodyId is NULL ❌");
-      return;
-    }
-
+    if (!localBodyId) return;
     axios.get(`http://localhost:8080/api/workers/active/${localBodyId}`)
       .then(res => setWorkers(res.data))
       .catch(err => console.error(err));
   };
 
   useEffect(() => {
-    fetchWorkers();
+    if (!localBodyId) return;
+    axios.get(`http://localhost:8080/api/workers/active/${localBodyId}`)
+      .then(res => setWorkers(res.data))
+      .catch(err => console.error(err));
   }, [localBodyId]);
 
   // ✅ CREATE WORKER
@@ -52,9 +52,11 @@ const ManageWorkers = () => {
     }
 
     const payload = {
-      name: name,
-      status: status,
-      localBodyId: Number(localBodyId) // 🔥 IMPORTANT FIX
+      name,
+      status,
+      localBodyId: Number(localBodyId),
+      email: email || undefined,
+      password: password || undefined
     };
 
     console.log("Sending payload:", payload); // DEBUG
@@ -102,6 +104,8 @@ const ManageWorkers = () => {
   const resetForm = () => {
     setName("");
     setStatus("ACTIVE");
+    setEmail("");
+    setPassword("");
     setSelectedWorkerId(null);
   };
 
@@ -118,10 +122,7 @@ const ManageWorkers = () => {
           {/* NAME */}
           <div className="form-group">
             <label>Name</label>
-            <input 
-              value={name} 
-              onChange={(e) => setName(e.target.value)} 
-            />
+            <input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
 
           {/* STATUS */}
@@ -131,6 +132,28 @@ const ManageWorkers = () => {
               <option value="ACTIVE">ACTIVE</option>
               <option value="INACTIVE">INACTIVE</option>
             </select>
+          </div>
+
+          {/* EMAIL */}
+          <div className="form-group">
+            <label>Login Email (optional)</label>
+            <input
+              type="email"
+              placeholder="worker@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          {/* PASSWORD */}
+          <div className="form-group">
+            <label>Password (optional)</label>
+            <input
+              type="password"
+              placeholder="Set login password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
 
           {/* BUTTONS */}

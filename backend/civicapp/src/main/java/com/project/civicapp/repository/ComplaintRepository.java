@@ -18,4 +18,6 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
     List<Complaint> findByWard_LocalBody(LocalBody localBody);
 
     long countByStatus(String status);
+
+    List<Complaint> findByFieldWorker_Id(Long workerId);
 }

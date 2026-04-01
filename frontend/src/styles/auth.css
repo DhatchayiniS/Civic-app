@@ -1,195 +1,141 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
-
-body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: #ffffff;
-}
-
-/* Center whole auth card */
+/* auth.css */
 .auth-container {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  background: linear-gradient(to right, #e0edff, #d6e6ff);
+  justify-content: center;
+  background: linear-gradient(135deg, #eef2ff 0%, #e0f2fe 100%);
+  padding: 24px;
 }
 
-/* Fix dropdown visibility */
-.auth-right select {
-  width: 100%;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
-  font-size: 14px;
-  background-color: #ffffff;
-  color: #111827;   /* VERY IMPORTANT */
-}
-
-.auth-right select option {
-  color: #111827;   /* VERY IMPORTANT */
-}
-
-
-/* Main Card */
 .auth-card {
-  width: 1000px;
-  height: 560px;
-  background: #ffffff;
-  border-radius: 28px;
   display: flex;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.08);
+  width: 960px;
+  max-width: 100%;
+  min-height: 540px;
+  background: #fff;
+  border-radius: 28px;
   overflow: hidden;
-  transition: 0.3s ease;
+  box-shadow: 0 24px 64px rgba(79,70,229,0.14);
 }
 
-/* LEFT SIDE - PREMIUM STYLE */
-
+/* Left branding panel */
 .auth-left {
   flex: 1;
-  position: relative;
-  background: linear-gradient(135deg, #4f46e5, #06b6d4);
-  color: white;
-  padding: 80px 70px;
+  background: linear-gradient(145deg, #4f46e5 0%, #06b6d4 100%);
+  padding: 64px 56px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
   overflow: hidden;
-  animation: gradientShift 8s ease infinite alternate;
 }
 
-/* Soft glowing effect top */
 .auth-left::before {
   content: "";
   position: absolute;
-  width: 420px;
-  height: 420px;
-  background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 70%);
-  top: -120px;
-  left: -120px;
+  width: 360px; height: 360px;
+  background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%);
+  top: -100px; left: -100px;
   border-radius: 50%;
 }
 
-/* Soft glowing effect bottom */
 .auth-left::after {
   content: "";
   position: absolute;
-  width: 380px;
-  height: 380px;
-  background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%);
-  bottom: -140px;
-  right: -140px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+  bottom: -80px; right: -80px;
   border-radius: 50%;
 }
 
-/* Gradient Animation */
-@keyframes gradientShift {
-  0% {
-    background: linear-gradient(135deg, #4f46e5, #06b6d4);
-  }
-  100% {
-    background: linear-gradient(135deg, #4338ca, #0891b2);
-  }
-}
-
-/* Branding Text */
 .auth-left h1 {
-  font-size: 40px;
-  font-weight: 600;
-  margin-bottom: 15px;
-  letter-spacing: 1px;
+  font-size: 38px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+  position: relative;
 }
 
 .auth-left h3 {
+  font-size: 16px;
   font-weight: 400;
-  margin-bottom: 25px;
-  opacity: 0.95;
+  color: rgba(255,255,255,0.88);
+  position: relative;
 }
 
-.auth-left p {
-  font-size: 15px;
-  margin-bottom: 30px;
-  line-height: 1.7;
-  opacity: 0.9;
-  max-width: 420px;
-}
-
-.auth-left ul {
-  list-style: none;
-  padding: 0;
-  font-size: 14px;
-}
-
-.auth-left li {
-  margin-bottom: 12px;
-  opacity: 0.95;
-}
-
-/* RIGHT SIDE - FORM */
-
+/* Right form panel */
 .auth-right {
   flex: 1;
-  padding: 80px 80px;
+  padding: 64px 56px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .auth-right h2 {
-  margin-bottom: 35px;
-  font-weight: 600;
   font-size: 26px;
-  color: #111827;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 32px;
+  letter-spacing: -0.3px;
 }
 
-/* Inputs */
-.auth-right input {
+.auth-right input,
+.auth-right select {
   width: 100%;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 14px;
-  border: 1px solid #e5e7eb;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--gray-200);
   font-size: 14px;
-  transition: 0.3s;
-}
-
-.auth-right input:focus {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  font-family: var(--font);
+  color: var(--gray-900);
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
 }
 
-/* Button */
+.auth-right input:focus,
+.auth-right select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.auth-right select option { color: var(--gray-900); }
+
+.auth-right button[type="submit"],
 .auth-right button {
   width: 100%;
-  padding: 15px;
-  border-radius: 14px;
+  padding: 14px;
+  border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg, #4f46e5, #06b6d4);
-  color: white;
-  font-weight: 500;
+  background: linear-gradient(135deg, var(--primary), var(--cyan));
+  color: #fff;
+  font-weight: 600;
   font-size: 15px;
+  font-family: var(--font);
   cursor: pointer;
-  transition: 0.3s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 24px rgba(79,70,229,0.28);
 }
 
 .auth-right button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 30px rgba(79, 70, 229, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(79,70,229,0.36);
 }
 
 .auth-right p {
-  margin-top: 25px;
+  margin-top: 22px;
   font-size: 14px;
+  color: var(--gray-500);
 }
 
 .auth-right a {
-  color: #4f46e5;
+  color: var(--primary);
+  font-weight: 600;
   text-decoration: none;
-  font-weight: 500;
 }
 
-.auth-right a:hover {
-  text-decoration: underline;
-}
+.auth-right a:hover { text-decoration: underline; }

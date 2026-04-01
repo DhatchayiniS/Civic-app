@@ -1,53 +1,30 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { FaUserCircle, FaPlusCircle, FaClipboardList, FaListAlt } from "react-icons/fa";
+import { FaPlusCircle, FaClipboardList, FaListAlt } from "react-icons/fa";
 import "../styles/UserDashboard.css";
 
 const UserDashboard = () => {
   const { user, logoutUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const goToProfile = () => {
-    navigate("/profile");
-  };
-
-  const handleLogout = () => {
-    logoutUser();
-  };
-
   return (
     <div className="dashboard-wrapper">
 
       {/* Top Bar */}
       <div className="top-bar">
+        <div className="app-name">SmartResolve</div>
+
+        <div className="top-bar-actions">
+          <button className="top-bar-btn" onClick={() => navigate("/profile")}>Profile</button>
+          <button className="top-bar-btn logout" onClick={() => logoutUser()}>Logout</button>
+        </div>
+      </div>
+
+      {/* Hero */}
+      <div className="dashboard-hero">
+        <h2>Welcome to SmartResolve</h2>
         
-        {/* App Name */}
-        <div className="app-name">
-          SmartResolve
-        </div>
-
-        {/* Account Section */}
-        <div className="account-container">
-          <div className="account-avatar">
-            <FaUserCircle className="account-icon" />
-            <span className="status-dot"></span>
-          </div>
-
-          <div className="account-dropdown">
-            <div className="user-name">
-              {user?.name}
-            </div>
-
-            <button className="dropdown-item" onClick={goToProfile}>
-              Profile
-            </button>
-
-            <button className="dropdown-item" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* Dashboard Buttons */}
