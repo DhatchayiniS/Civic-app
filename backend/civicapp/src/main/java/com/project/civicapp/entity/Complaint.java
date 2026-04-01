@@ -44,4 +44,8 @@ public class Complaint {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
+    @ManyToOne
+    @JoinColumn(name = "field_worker_id")
+    private FieldWorker fieldWorker;
 }

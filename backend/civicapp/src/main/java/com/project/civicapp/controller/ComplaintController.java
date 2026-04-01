@@ -1,6 +1,7 @@
 package com.project.civicapp.controller;
 
 import com.project.civicapp.entity.Complaint;
+import com.project.civicapp.entity.LocalBody;
 import com.project.civicapp.service.ComplaintService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -57,5 +58,27 @@ public class ComplaintController {
         return ResponseEntity.ok(complaintService.getAllComplaints());
     }
 
+    @PutMapping("/assign")
+    public ResponseEntity<?> assignComplaint(
+            @RequestParam Long complaintId,
+            @RequestParam Long workerId
+    ) {
+        try {
+            complaintService.assignComplaint(complaintId, workerId);
+            return ResponseEntity.ok("Assigned successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @GetMapping("/localbody/{localBodyId}")
+    public ResponseEntity<?> getByLocalBody(@PathVariable Long localBodyId) {
+
+        LocalBody localBody = new LocalBody();
+        localBody.setId(localBodyId);
+
+        return ResponseEntity.ok(
+                complaintService.getComplaintsByLocalBody(localBody)
+        );
+    }
 
 }

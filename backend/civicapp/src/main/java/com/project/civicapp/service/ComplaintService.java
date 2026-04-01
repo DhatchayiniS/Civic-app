@@ -27,6 +27,7 @@ public class ComplaintService {
     private final ComplaintRepository complaintRepository;
     private final UserRepository userRepository;
     private final WardRepository wardRepository;
+    private final FieldWorkerRepository fieldWorkerRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -85,6 +86,10 @@ public class ComplaintService {
         return complaintRepository.findAll();
     }
 
+    public List<Complaint> getComplaintsByLocalBody(LocalBody localBody) {
+        return complaintRepository.findByWard_LocalBody(localBody);
+    }
+
     public List<Complaint> getComplaintsByWard(Integer wardNo) {
         return complaintRepository.findByWard_WardNo(wardNo);
     }
@@ -92,8 +97,23 @@ public class ComplaintService {
     public List<Complaint> getComplaintsByUser(Long userId) {
         return complaintRepository.findByUser_Id(userId);
     }
+    public void assignComplaint(Long complaintId, Long workerId) {
 
+        Complaint complaint = complaintRepository.findById(complaintId)
+                .orElseThrow(() -> new RuntimeException("Complaint not found"));
 
+        FieldWorker worker = fieldWorkerRepository.findById(workerId)
+                .orElseThrow(() -> new RuntimeException("Worker not found"));
+
+        if (worker.getStatus() != WorkerStatus.ACTIVE) {
+            throw new RuntimeException("Worker is inactive");
+        }
+
+        complaint.setFieldWorker(worker);
+        complaint.setStatus("ASSIGNED");
+
+        complaintRepository.save(complaint);
+    }
 }
 
 

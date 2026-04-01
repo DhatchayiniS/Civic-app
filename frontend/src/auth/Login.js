@@ -17,12 +17,30 @@ const Login = () => {
     e.preventDefault();
     try {
       const userData = await login(form);
+
+      // 🔥 ADD THIS BLOCK (IMPORTANT)
+      const user = {
+        id: userData.id,
+        role: userData.role,
+        localBodyId: userData.localBodyId   // ✅ required for workers
+      };
+
+      console.log("Login response:", userData); // DEBUG
+      console.log("Stored user:", user);        // DEBUG
+
+      localStorage.setItem("user", JSON.stringify(user));
+      // 🔥 END
+
       loginUser(userData);
+
       if (userData.role === "ADMIN") {
         navigate("/admin-dashboard");
+      } else if (userData.role === "LOCAL_BODY") {
+        navigate("/authority-dashboard");
       } else {
         navigate("/user-dashboard");
       }
+
     } catch {
       alert("Invalid credentials");
     }

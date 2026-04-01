@@ -8,6 +8,10 @@ import MyComplaints from "./dashboards/MyComplaints";
 import AllComplaints from "./dashboards/AllComplaints";
 import UserProfile from "./dashboards/UserProfile";
 import AdminDashboard from "./dashboards/AdminDashboard";
+import AuthorityDashboard from "./dashboards/AuthorityDashboard";
+import ManageWorkers from "./dashboards/ManageWorkers";
+import AssignComplaints from "./dashboards/AssignComplaints";
+import ViewStatus from "./dashboards/ViewStatus";
 
 
 
@@ -48,6 +52,11 @@ function App() {
             } 
           />
 
+          <Route path="/authority-dashboard" element={<AuthorityDashboard />} />
+          <Route path="/manage-workers" element={<ManageWorkers />} />
+          <Route path="/assign-complaints" element={<AssignComplaints />} />
+          <Route path="/view-status" element={<ViewStatus />} />
+
           <Route 
             path="/profile" 
             element={
@@ -63,6 +72,8 @@ function App() {
         </Routes>
       </Router>
     </AuthProvider>
+
+
   );
 }
 

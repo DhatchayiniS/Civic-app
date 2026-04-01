@@ -14,4 +14,5 @@ public class LoginResponse {
     private String email;
     private Role role;
     private Integer wardNo; // <--- important
+    private Long localBodyId;
 }

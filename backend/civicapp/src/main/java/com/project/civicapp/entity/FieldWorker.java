@@ -23,6 +23,16 @@ public class FieldWorker {
     private LocalBody localBody;
 
     @ManyToOne
-    @JoinColumn(name = "ward_id")
+    @JoinColumn(name = "ward_id",nullable = true)
     private Ward ward;
+
+    @Enumerated(EnumType.STRING)
+    private WorkerStatus status;
+
+    @PrePersist
+    public void setDefaultStatus() {
+        if (this.status == null) {
+            this.status = WorkerStatus.ACTIVE;
+        }
+    }
 }
