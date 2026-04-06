@@ -1,7 +1,8 @@
-import { useState, useContext, useRef } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { FaCamera, FaMapMarkerAlt, FaTimes, FaCheck } from "react-icons/fa";
+import { getGeoLocation, isValidGeoTag, stampGeoTag } from "../utils/geotagUtils";
 import "../styles/ReportIssue.css";
 import { submitComplaint } from "../api/complaintService";
 
@@ -9,10 +10,16 @@ const ReportIssue = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Refs for Camera Logic
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const streamRef = useRef(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
+
+  useEffect(() => {
+    if (isCameraOpen && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+    }
+  }, [isCameraOpen]);
 
   const [issueType, setIssueType] = useState("");
   const [description, setDescription] = useState("");
@@ -28,53 +35,56 @@ const ReportIssue = () => {
     "Garbage Issue",
   ];
 
-  // --- START CAMERA LOGIC ---
   const startCamera = async () => {
     setError("");
-    setIsCameraOpen(true);
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setError("Camera not supported or page must be served over HTTPS.");
+      return;
+    }
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: "environment" } 
-      });
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      streamRef.current = stream;
+      setIsCameraOpen(true);
     } catch (err) {
       console.error("Camera Access Error:", err);
       setError("Cannot access camera. Ensure permissions are granted.");
-      setIsCameraOpen(false);
     }
   };
 
   const stopCamera = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const tracks = videoRef.current.srcObject.getTracks();
-      tracks.forEach(track => track.stop());
-    }
+    streamRef.current?.getTracks().forEach(t => t.stop());
+    streamRef.current = null;
     setIsCameraOpen(false);
   };
 
-  const takePhoto = () => {
-    const width = videoRef.current.videoWidth;
-    const height = videoRef.current.videoHeight;
-    const context = canvasRef.current.getContext("2d");
-
-    canvasRef.current.width = width;
-    canvasRef.current.height = height;
-    context.drawImage(videoRef.current, 0, 0, width, height);
-
-    canvasRef.current.toBlob((blob) => {
-      const file = new File([blob], `capture_${Date.now()}.jpg`, { type: "image/jpeg" });
-      
-      if (file.size > 5 * 1024 * 1024) {
-        setError("Captured image is too large.");
+  const takePhoto = async () => {
+    setError("");
+    try {
+      const { latitude, longitude } = await getGeoLocation();
+      if (!isValidGeoTag(latitude, longitude)) {
+        setError("Invalid geotag. Cannot verify your location.");
         return;
       }
-
-      setImage(file);
-      setError("");
-      stopCamera();
-    }, "image/jpeg", 0.9);
+      const width = videoRef.current.videoWidth;
+      const height = videoRef.current.videoHeight;
+      const context = canvasRef.current.getContext("2d");
+      canvasRef.current.width = width;
+      canvasRef.current.height = height;
+      context.drawImage(videoRef.current, 0, 0, width, height);
+      stampGeoTag(canvasRef.current, latitude, longitude);
+      canvasRef.current.toBlob((blob) => {
+        const file = new File([blob], `capture_${Date.now()}.jpg`, { type: "image/jpeg" });
+        if (file.size > 5 * 1024 * 1024) {
+          setError("Captured image is too large.");
+          return;
+        }
+        setImage(file);
+        setError("");
+        stopCamera();
+      }, "image/jpeg", 0.9);
+    } catch (err) {
+      setError(typeof err === "string" ? err : "Location access denied. Please enable location services.");
+    }
   };
   // --- END CAMERA LOGIC ---
 
@@ -116,7 +126,7 @@ const ReportIssue = () => {
     formData.append("userId", user.id);
 
     if (image) {
-      formData.append("completionImage", image);
+      formData.append("image", image);
     }
 
     try {

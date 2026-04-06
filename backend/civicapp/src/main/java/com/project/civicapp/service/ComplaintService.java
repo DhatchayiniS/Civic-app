@@ -1,8 +1,5 @@
 package com.project.civicapp.service;
 
-import com.project.civicapp.entity.Complaint;
-import com.project.civicapp.entity.User;
-import com.project.civicapp.entity.Ward;
 import com.project.civicapp.repository.ComplaintRepository;
 import com.project.civicapp.repository.UserRepository;
 import com.project.civicapp.repository.WardRepository;
@@ -10,14 +7,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.util.List;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.UUID;
 
 import com.project.civicapp.entity.*;
 import com.project.civicapp.repository.*;
 import org.springframework.beans.factory.annotation.Value;
-import java.util.UUID;
 
 
 @Service
@@ -57,25 +55,13 @@ public class ComplaintService {
                 .build();
 
         if (image != null && !image.isEmpty()) {
-
             if (!image.getContentType().startsWith("image/")) {
                 throw new RuntimeException("Only image files allowed");
             }
-
             String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
-
-            // Absolute path
-            String absoluteUploadPath = System.getProperty("user.dir") + File.separator + uploadDir;
-
-            File uploadFolder = new File(absoluteUploadPath);
-            if (!uploadFolder.exists()) {
-                uploadFolder.mkdirs();
-            }
-
-            File destination = new File(uploadFolder, fileName);
-
-            image.transferTo(destination);
-
+            java.nio.file.Path uploadPath = Paths.get(System.getProperty("user.dir"), uploadDir);
+            Files.createDirectories(uploadPath);
+            image.transferTo(uploadPath.resolve(fileName).toFile());
             complaint.setImageName(fileName);
         }
 
@@ -119,7 +105,7 @@ public class ComplaintService {
         return complaintRepository.findByFieldWorker_Id(workerId);
     }
 
-    public void completeComplaint(Long complaintId, MultipartFile image) throws IOException {
+    public Complaint completeComplaint(Long complaintId, MultipartFile image) throws IOException {
         Complaint complaint = complaintRepository.findById(complaintId)
                 .orElseThrow(() -> new RuntimeException("Complaint not found"));
 
@@ -128,15 +114,14 @@ public class ComplaintService {
                 throw new RuntimeException("Only image files allowed");
             }
             String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
-            String absoluteUploadPath = System.getProperty("user.dir") + File.separator + uploadDir;
-            File uploadFolder = new File(absoluteUploadPath);
-            if (!uploadFolder.exists()) uploadFolder.mkdirs();
-            image.transferTo(new File(uploadFolder, fileName));
+            java.nio.file.Path uploadPath = Paths.get(System.getProperty("user.dir"), uploadDir);
+            Files.createDirectories(uploadPath);
+            image.transferTo(uploadPath.resolve(fileName).toFile());
             complaint.setCompletionImage(fileName);
         }
 
         complaint.setStatus("COMPLETED");
-        complaintRepository.save(complaint);
+        return complaintRepository.save(complaint);
     }
 }
 

@@ -24,20 +24,14 @@ public class ComplaintController {
             @RequestParam Double longitude,
             @RequestParam Integer wardId,
             @RequestParam Long userId,
-            @RequestParam(required = false) MultipartFile completionImage
+            @RequestParam(required = false) MultipartFile image
     ) {
         try {
             Complaint complaint = complaintService.saveComplaint(
                     issueType, description, latitude, longitude,
-                    wardId, userId, completionImage
+                    wardId, userId, image
             );
-
-            String imageUrl = complaint.getImageName() != null
-                    ? "http://localhost:8080/uploads/" + complaint.getImageName()
-                    : null;
-
-            return ResponseEntity.ok(imageUrl);
-
+            return ResponseEntity.ok(complaint);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -92,8 +86,8 @@ public class ComplaintController {
             @RequestParam(required = false) MultipartFile completionImage
     ) {
         try {
-            complaintService.completeComplaint(id, completionImage);
-            return ResponseEntity.ok("Complaint marked as completed");
+            Complaint complaint = complaintService.completeComplaint(id, completionImage);
+            return ResponseEntity.ok(complaint);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

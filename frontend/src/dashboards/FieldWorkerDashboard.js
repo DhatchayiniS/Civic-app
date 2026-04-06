@@ -1,7 +1,9 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import { FaCamera, FaCheck, FaTimes } from "react-icons/fa";
+import { getGeoLocation, isValidGeoTag, stampGeoTag } from "../utils/geotagUtils";
 import "../styles/fieldworker-dashboard.css";
 
 const BASE = "http://localhost:8080";
@@ -18,13 +20,147 @@ const ImageModal = ({ url, title, onClose }) => (
   </div>
 );
 
+/* Per-card complete section with live camera capture */
+const CompleteSection = ({ complaintId, onComplete }) => {
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const streamRef = useRef(null);
+
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (isCameraOpen && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+    }
+  }, [isCameraOpen]);
+
+  const startCamera = async () => {
+    setError("");
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setError("Camera not supported or page must be served over HTTPS.");
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      streamRef.current = stream;
+      setIsCameraOpen(true);
+    } catch {
+      setError("Cannot access camera. Please grant camera permission.");
+    }
+  };
+
+  const stopCamera = () => {
+    streamRef.current?.getTracks().forEach(t => t.stop());
+    streamRef.current = null;
+    setIsCameraOpen(false);
+  };
+
+  const takePhoto = async () => {
+    setError("");
+    try {
+      const { latitude, longitude } = await getGeoLocation();
+      if (!isValidGeoTag(latitude, longitude)) {
+        setError("Invalid geotag. Cannot verify your location.");
+        return;
+      }
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext("2d").drawImage(video, 0, 0);
+      stampGeoTag(canvas, latitude, longitude);
+      canvas.toBlob((blob) => {
+        const file = new File([blob], `capture_${Date.now()}.jpg`, { type: "image/jpeg" });
+        setPhoto(file);
+        stopCamera();
+      }, "image/jpeg", 0.9);
+    } catch (err) {
+      setError(typeof err === "string" ? err : "Location access denied. Please enable location services.");
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!photo) { setError("Please take a photo first."); return; }
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("completionImage", photo);
+      const res = await axios.put(`${BASE}/api/complaints/${complaintId}/complete`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      onComplete(complaintId, res.data); // pass full updated complaint back
+    } catch {
+      setError("Failed to complete complaint.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="complete-section">
+      {error && <div className="error-box">{error}</div>}
+
+      {/* Camera trigger — same as ReportIssue action-card */}
+      <div className="action-row">
+        <button
+          type="button"
+          className={`action-card ${photo ? "active" : ""}`}
+          onClick={isCameraOpen ? stopCamera : startCamera}
+        >
+          <FaCamera className="action-icon" />
+          <span>{photo ? "Change Photo" : "Take Completion Photo"}</span>
+        </button>
+      </div>
+
+      {/* Live camera view — same as ReportIssue */}
+      {isCameraOpen && (
+        <div className="camera-container" style={{ textAlign: "center", marginTop: "10px" }}>
+          <video ref={videoRef} autoPlay playsInline style={{ width: "100%", borderRadius: "8px", backgroundColor: "#000" }} />
+          <div style={{ marginTop: "10px", display: "flex", justifyContent: "center", gap: "10px" }}>
+            <button type="button" onClick={takePhoto} className="capture-btn-inner"><FaCheck /> Capture</button>
+            <button type="button" onClick={stopCamera} className="close-btn-inner"><FaTimes /> Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Hidden canvas */}
+      <canvas ref={canvasRef} style={{ display: "none" }} />
+
+      {/* Preview — same as ReportIssue image-preview */}
+      {photo && !isCameraOpen && (
+        <div className="image-preview">
+          <img
+            src={URL.createObjectURL(photo)}
+            alt="Preview"
+            width="220"
+            style={{ borderRadius: "8px", marginTop: "10px" }}
+          />
+        </div>
+      )}
+
+      {/* Submit */}
+      {photo && !isCameraOpen && (
+        <button
+          className="btn-complete"
+          disabled={loading}
+          onClick={handleSubmit}
+          style={{ marginTop: "12px" }}
+        >
+          {loading ? "Submitting..." : "✅ Mark as Completed"}
+        </button>
+      )}
+    </div>
+  );
+};
+
 const FieldWorkerDashboard = () => {
   const navigate = useNavigate();
   const { user, logoutUser } = useContext(AuthContext);
 
   const [complaints, setComplaints] = useState([]);
-  const [photoMap, setPhotoMap] = useState({});
-  const [loadingMap, setLoadingMap] = useState({});
   const [modal, setModal] = useState(null);
 
   const workerId = user?.workerId;
@@ -36,25 +172,8 @@ const FieldWorkerDashboard = () => {
       .catch(() => alert("Failed to load complaints"));
   }, [workerId]);
 
-  const handlePhotoChange = (id, file) => {
-    setPhotoMap(prev => ({ ...prev, [id]: file }));
-  };
-
-  const handleComplete = async (id) => {
-    setLoadingMap(prev => ({ ...prev, [id]: true }));
-    try {
-      const formData = new FormData();
-      if (photoMap[id]) formData.append("completionImage", photoMap[id]);
-      await axios.put(`${BASE}/api/complaints/${id}/complete`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setComplaints(prev => prev.map(c => c.id === id ? { ...c, status: "COMPLETED" } : c));
-      setPhotoMap(prev => { const n = { ...prev }; delete n[id]; return n; });
-    } catch {
-      alert("Failed to complete complaint");
-    } finally {
-      setLoadingMap(prev => ({ ...prev, [id]: false }));
-    }
+  const handleCompleted = (id, updatedComplaint) => {
+    setComplaints(prev => prev.map(c => c.id === id ? { ...c, ...updatedComplaint } : c));
   };
 
   const counts = {
@@ -106,7 +225,6 @@ const FieldWorkerDashboard = () => {
                 <p><strong>Ward:</strong> {c.ward?.wardNo}</p>
                 <p><strong>Location:</strong> {c.latitude?.toFixed(4)}, {c.longitude?.toFixed(4)}</p>
 
-                {/* Image buttons */}
                 <div className="img-btn-row">
                   {c.imageName ? (
                     <button className="btn-img-view complaint"
@@ -127,22 +245,7 @@ const FieldWorkerDashboard = () => {
                 </div>
 
                 {c.status === "ASSIGNED" && (
-                  <div className="complete-section">
-                    <label className="file-input-label">Upload Completion Photo (optional)</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="file-input"
-                      onChange={e => handlePhotoChange(c.id, e.target.files[0])}
-                    />
-                    <button
-                      className="btn-complete"
-                      disabled={loadingMap[c.id]}
-                      onClick={() => handleComplete(c.id)}
-                    >
-                      {loadingMap[c.id] ? "Submitting..." : "Mark as Completed"}
-                    </button>
-                  </div>
+                  <CompleteSection complaintId={c.id} onComplete={handleCompleted} />
                 )}
               </div>
             ))}
