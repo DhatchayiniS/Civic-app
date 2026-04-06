@@ -16,6 +16,7 @@ const AdminDashboard = () => {
     pending: 0,
     assigned: 0,
     completed: 0,
+    onHold: 0,
   });
 
   const [localBodies, setLocalBodies] = useState([]);
@@ -170,6 +171,10 @@ const AdminDashboard = () => {
           <div className="card">
             <h3>Completed</h3>
             <p>{stats.completed}</p>
+          </div>
+          <div className="card">
+            <h3>On Hold</h3>
+            <p>{stats.onHold}</p>
           </div>
         </div>
       )}

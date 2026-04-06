@@ -92,4 +92,25 @@ public class ComplaintController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PutMapping("/{id}/hold")
+    public ResponseEntity<?> holdComplaint(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(complaintService.holdComplaint(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/reupload-image")
+    public ResponseEntity<?> reuploadImage(
+            @PathVariable Long id,
+            @RequestParam MultipartFile image
+    ) {
+        try {
+            return ResponseEntity.ok(complaintService.reuploadImage(id, image));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

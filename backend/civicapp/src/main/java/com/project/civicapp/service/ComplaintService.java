@@ -105,6 +105,30 @@ public class ComplaintService {
         return complaintRepository.findByFieldWorker_Id(workerId);
     }
 
+    public Complaint holdComplaint(Long complaintId) {
+        Complaint complaint = complaintRepository.findById(complaintId)
+                .orElseThrow(() -> new RuntimeException("Complaint not found"));
+        complaint.setStatus("ON_HOLD");
+        return complaintRepository.save(complaint);
+    }
+
+    public Complaint reuploadImage(Long complaintId, MultipartFile image) throws IOException {
+        Complaint complaint = complaintRepository.findById(complaintId)
+                .orElseThrow(() -> new RuntimeException("Complaint not found"));
+        if (!"ON_HOLD".equals(complaint.getStatus())) {
+            throw new RuntimeException("Reupload only allowed for ON_HOLD complaints");
+        }
+        if (image == null || image.isEmpty()) throw new RuntimeException("Image required");
+        if (!image.getContentType().startsWith("image/")) throw new RuntimeException("Only image files allowed");
+        String fileName = UUID.randomUUID() + "_" + image.getOriginalFilename();
+        java.nio.file.Path uploadPath = Paths.get(System.getProperty("user.dir"), uploadDir);
+        Files.createDirectories(uploadPath);
+        image.transferTo(uploadPath.resolve(fileName).toFile());
+        complaint.setImageName(fileName);
+        complaint.setStatus("PENDING");
+        return complaintRepository.save(complaint);
+    }
+
     public Complaint completeComplaint(Long complaintId, MultipartFile image) throws IOException {
         Complaint complaint = complaintRepository.findById(complaintId)
                 .orElseThrow(() -> new RuntimeException("Complaint not found"));

@@ -21,3 +21,9 @@ export const assignComplaint = async (complaintId, workerId) => {
   });
   return res.data;
 };
+
+// ✅ Put complaint on hold
+export const holdComplaint = async (complaintId) => {
+  const res = await axios.put(`${BASE_URL}/api/complaints/${complaintId}/hold`);
+  return res.data;
+};

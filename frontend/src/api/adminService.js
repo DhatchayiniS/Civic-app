@@ -6,6 +6,15 @@ export const getDashboardStats = async () => {
   return response.data;
 };
 
+export const reuploadComplaintImage = async (complaintId, formData) => {
+  const response = await axios.put(
+    `http://localhost:8080/api/complaints/${complaintId}/reupload-image`,
+    formData,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+  return response.data;
+};
+
 export const getLocalBodies = async () => {
   const response = await axios.get("http://localhost:8080/admin/local-bodies");
   return response.data; // array of LocalBody objects

@@ -25,10 +25,13 @@ public class AdminController {
         long assigned = complaintRepository.countByStatus("ASSIGNED");
         long completed = complaintRepository.countByStatus("COMPLETED");
 
+        long onHold    = complaintRepository.countByStatus("ON_HOLD");
+
         stats.put("total", total);
         stats.put("pending", pending);
         stats.put("assigned", assigned);
         stats.put("completed", completed);
+        stats.put("onHold", onHold);
 
         return stats;
     }

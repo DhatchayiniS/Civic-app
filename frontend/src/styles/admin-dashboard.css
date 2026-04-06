@@ -21,6 +21,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.4px;
+  margin-bottom: 28px;
 }
 
 .logout-btn {
